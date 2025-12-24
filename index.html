@@ -2,31 +2,143 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Em breve.</title>
+  <title>AntBot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    html, body {
+    body {
       margin: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-height: 100vh;
+      background: #0b0b0b;
       color: #fff;
       font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 30px 20px;
+      box-sizing: border-box;
+    }
+
+    .counter {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .counter h1 {
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    .counter span {
+      display: block;
       font-size: 3rem;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .comments {
+      background: #111;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .comments h2 {
+      margin: 0 0 15px 0;
+      font-size: 1.4rem;
+      font-weight: 400;
+      border-bottom: 1px solid #222;
+      padding-bottom: 10px;
+    }
+
+    .comment {
+      padding: 10px 0;
+      border-bottom: 1px solid #1f1f1f;
+    }
+
+    .comment:last-child {
+      border-bottom: none;
+    }
+
+    .comment .user {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+
+    .comment .message {
+      font-size: 1rem;
+      word-wrap: break-word;
+    }
+
+    .empty {
+      opacity: 0.5;
+      text-align: center;
+      padding: 20px 0;
     }
   </style>
 </head>
 <body>
-  <div id="contador">0</div>
+
+  <div class="container">
+
+    <div class="counter">
+      <h1>figurinhas feitas pelo bot</h1>
+      <span id="contador">0</span>
+    </div>
+
+    <div class="comments">
+      <h2>comentários</h2>
+      <div id="comments">
+        <div class="empty">carregando comentários...</div>
+      </div>
+    </div>
+
+  </div>
 
   <script>
     fetch("https://antbot.toskopado.workers.dev/stats")
       .then(r => r.json())
       .then(d => {
         document.getElementById("contador").innerText = d.total;
+      })
+      .catch(() => {
+        document.getElementById("contador").innerText = "?";
+      });
+
+    fetch("https://antbotposts.toskopado.workers.dev/comments")
+      .then(r => r.json())
+      .then(data => {
+        const container = document.getElementById("comments");
+        container.innerHTML = "";
+
+        if (!data.length) {
+          container.innerHTML = `<div class="empty">nenhum comentário ainda</div>`;
+          return;
+        }
+
+        data.forEach(c => {
+          const div = document.createElement("div");
+          div.className = "comment";
+
+          div.innerHTML = `
+            <div class="user">${c.user || "Anônimo"}</div>
+            <div class="message">${c.message}</div>
+          `;
+
+          container.appendChild(div);
+        });
+      })
+      .catch(() => {
+        document.getElementById("comments").innerHTML =
+          `<div class="empty">erro ao carregar comentários</div>`;
       });
   </script>
+
 </body>
 </html>
