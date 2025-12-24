@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Em breve</title>
+  <title>Em breve.</title>
   <style>
     html, body {
       margin: 0;
@@ -12,16 +12,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: Arial, sans-serif;
-    }
-    h1 {
       color: #fff;
+      font-family: Arial, sans-serif;
       font-size: 3rem;
-      font-weight: 400;
     }
   </style>
 </head>
 <body>
-  <h1>em breve.</h1>
+  <div id="contador">0</div>
+
+  <script>
+    fetch("https://antbot.toskopado.workers.dev/stats")
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById("contador").innerText = d.total;
+      });
+  </script>
 </body>
 </html>
